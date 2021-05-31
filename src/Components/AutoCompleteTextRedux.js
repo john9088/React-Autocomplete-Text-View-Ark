@@ -1,8 +1,9 @@
 import React,{useState, useEffect} from 'react'
 import '../CustomStyle/AutoCompleteText.css'
+import {connect} from 'react-redux'
 
 
-const AutoCompleteText = ({data}) =>{
+const AutoCompleteText = ({data,updateSearchQuery}) =>{
     const items = data
     let [suggessions,setSuggessions] = useState([])
     let [text,setText] = useState('')
@@ -16,14 +17,13 @@ const AutoCompleteText = ({data}) =>{
     },[])
 
     const onTextChange = (e) => {
-        const value = e.target.value
+        let value = e.target.value
         setText(value)
         let tempSuggessions = []
         if(value.length > 0){
             const regex = new RegExp(`^${value}`,'i')
             tempSuggessions = items.sort().filter(v => regex.test(v))
-        }    
-          
+        }     
         setSuggessions(tempSuggessions)
     }
 
@@ -47,10 +47,10 @@ const AutoCompleteText = ({data}) =>{
                 </ul>
             )
     }
-    //Imp value
+    
     const suggessionSelected = (value) =>{
-        console.log(value)
         setText(value)
+        updateSearchQuery(value)
         setSuggessions([])
     }
     //To handle key inpute
@@ -64,10 +64,12 @@ const AutoCompleteText = ({data}) =>{
         else if(e.keyCode === 13){ //Enter button
             suggessionSelected(suggessions[cursor])
         }
+        else if(e.keyCode === 27){ //Esc button
+            setSuggessions([])
+        }
         else{
             setCursor(0)
         }
-            
     }
 
       //To handle onFocus and onBlur
@@ -75,6 +77,10 @@ const AutoCompleteText = ({data}) =>{
         let value = e.target.getAttribute('autocompletename')
         if(value === null)
             setSuggessions([])
+        else if(value === 'inInput'){
+            onTextChange(e)
+            renderSuggesstions()
+        } 
     }
 
     //On hover over li highlight the li
@@ -96,4 +102,10 @@ const AutoCompleteText = ({data}) =>{
         </div>
     )
 }
-export default AutoCompleteText
+
+const mapDispatchToProps = (dispatch) =>{
+    return{
+        updateSearchQuery: (value) => {dispatch({type:'UPDATE_SEARCH_QUERY',payload: value})}
+    }
+}
+export default connect(null,mapDispatchToProps)(AutoCompleteText)

@@ -3,22 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {createStore} from 'redux'
 import {Provider} from 'react-redux'
-import allReducer from './reducers/index'
+import {ConfigureStore} from './redux/configureStore'
 
-
-//STORE -> GLOBAL STATE
-const store = createStore(allReducer)
-//store.dispatch({ type: 'UPDATE_SEARCH' })
-store.subscribe(()=>console.log(store.getState()))
+const store = ConfigureStore()
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
     </Provider>
-    
   </React.StrictMode>,
   document.getElementById('root')
 );
