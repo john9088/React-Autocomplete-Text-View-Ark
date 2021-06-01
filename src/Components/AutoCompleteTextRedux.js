@@ -1,30 +1,28 @@
-import React,{useState, useEffect} from 'react'
+import React,{useEffect} from 'react'
 import '../CustomStyle/AutoCompleteText.css'
 import {connect} from 'react-redux'
+// import AutoCompleteHelper from '../AutoCompleteHelper/AutoCompleteHelper'
 
-
-const AutoCompleteText = ({data,updateSearchQuery}) =>{
+const AutoCompleteText = ({ data,text,suggessions,cursor,
+                            updateSearchQuery,updateTextInput,updateSuggessions,updateCursor}) =>{
     const items = data
-    let [suggessions,setSuggessions] = useState([])
-    let [text,setText] = useState('')
-    let [cursor,setCursor] = useState(null)
     
     useEffect(() => {
         window.addEventListener('click',handleShowSuggessions)
         return(
             () => window.removeEventListener('click',handleShowSuggessions)
         )
-    },[])
+    },)
 
     const onTextChange = (e) => {
         let value = e.target.value
-        setText(value)
+        updateTextInput(value)
         let tempSuggessions = []
         if(value.length > 0){
             const regex = new RegExp(`^${value}`,'i')
             tempSuggessions = items.sort().filter(v => regex.test(v))
         }     
-        setSuggessions(tempSuggessions)
+        updateSuggessions(tempSuggessions)
     }
 
     const renderSuggesstions = () => {
@@ -49,26 +47,26 @@ const AutoCompleteText = ({data,updateSearchQuery}) =>{
     }
     
     const suggessionSelected = (value) =>{
-        setText(value)
+        updateTextInput(value)
         updateSearchQuery(value)
-        setSuggessions([])
+        updateSuggessions([])
     }
     //To handle key inpute
     const handleKeyDown = (e) => {
         if(e.keyCode === 38 && cursor > 0){ //Up arrow
-            setCursor(cursor - 1)
+            updateCursor(cursor - 1)
         }
         else if(e.keyCode === 40 && cursor < suggessions.length - 1){ //Down arrow
-            setCursor(cursor + 1)
+            updateCursor(cursor + 1)
         }  
         else if(e.keyCode === 13){ //Enter button
             suggessionSelected(suggessions[cursor])
         }
         else if(e.keyCode === 27){ //Esc button
-            setSuggessions([])
+            updateSuggessions([])
         }
         else{
-            setCursor(0)
+            updateCursor(0)
         }
     }
 
@@ -76,7 +74,7 @@ const AutoCompleteText = ({data,updateSearchQuery}) =>{
     const handleShowSuggessions = (e) => {
         let value = e.target.getAttribute('autocompletename')
         if(value === null)
-            setSuggessions([])
+            updateSuggessions([])
         else if(value === 'inInput'){
             onTextChange(e)
             renderSuggesstions()
@@ -85,7 +83,7 @@ const AutoCompleteText = ({data,updateSearchQuery}) =>{
 
     //On hover over li highlight the li
     const toggleHover = (e) => {
-        setCursor(e.target.getAttribute('listid'))
+        updateCursor(e.target.getAttribute('listid'))
     }
     
     return(
@@ -105,7 +103,19 @@ const AutoCompleteText = ({data,updateSearchQuery}) =>{
 
 const mapDispatchToProps = (dispatch) =>{
     return{
-        updateSearchQuery: (value) => {dispatch({type:'UPDATE_SEARCH_QUERY',payload: value})}
+        updateSearchQuery: (value) => {dispatch({type:'UPDATE_SEARCH_QUERY',payload: value})},
+        updateTextInput: (value) => {dispatch({type:'ON_TEXT_CHANGE',payload: value})},
+        updateSuggessions: (value) => {dispatch({type:'UPDATE_SUGGESSIONS',payload: value})},
+        updateCursor: (value) => {dispatch({type:'UPDATE_CURSOR',payload: value})}
     }
 }
-export default connect(null,mapDispatchToProps)(AutoCompleteText)
+
+const mapStateToProps = (state) => {
+    return{
+        data:state.allSuggessions,
+        text:state.inText,
+        suggessions:state.suggessions,
+        cursor:state.cursor
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(AutoCompleteText)
