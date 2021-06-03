@@ -103,10 +103,10 @@ const AutoCompleteText = ({ data,text,suggessions,cursor,
 
 const mapDispatchToProps = (dispatch) =>{
     return{
-        updateSearchQuery: (value) => {dispatch({type:'UPDATE_SEARCH_QUERY',payload: value})},
-        updateTextInput: (value) => {dispatch({type:'ON_TEXT_CHANGE',payload: value})},
-        updateSuggessions: (value) => {dispatch({type:'UPDATE_SUGGESSIONS',payload: value})},
-        updateCursor: (value) => {dispatch({type:'UPDATE_CURSOR',payload: value})}
+        updateSearchQuery: (value) => {dispatch({type:'autoCompleteText/UPDATE_SEARCH_QUERY',payload: value})},
+        updateTextInput: (value) => {dispatch({type:'autoCompleteText/ON_TEXT_CHANGE',payload: value})},
+        updateSuggessions: (value) => {dispatch({type:'autoCompleteText/UPDATE_SUGGESSIONS',payload: value})},
+        updateCursor: (value) => {dispatch({type:'autoCompleteText/UPDATE_CURSOR',payload: value})}
     }
 }
 

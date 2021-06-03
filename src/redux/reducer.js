@@ -8,13 +8,13 @@ export const initialState = {
 };
 
 export const Reducer = (state=initialState, action) => {
-    if(action.type === 'UPDATE_SEARCH_QUERY')
+    if(action.type === 'autoCompleteText/UPDATE_SEARCH_QUERY')
         return {...state, searchQuery: action.payload}
-    if(action.type === 'ON_TEXT_CHANGE')
+    if(action.type === 'autoCompleteText/ON_TEXT_CHANGE')
         return {...state, inText: action.payload}
-    if(action.type === 'UPDATE_SUGGESSIONS')
+    if(action.type === 'autoCompleteText/UPDATE_SUGGESSIONS')
         return {...state, suggessions: action.payload}
-    if(action.type === 'UPDATE_CURSOR')
+    if(action.type === 'autoCompleteText/UPDATE_CURSOR')
         return {...state, cursor: action.payload}
     return state
 }
